@@ -1,0 +1,22 @@
+
+name: webapp
+
+display-name: Web App
+
+summary: Web app charm to test consumer side of secrets
+
+description: |
+    This is a test charm by Ben.
+
+containers:
+  redis:
+    resource: redis-image
+
+resources:
+  redis-image:
+    type: oci-image
+    description: Docker image for Redis
+
+requires:
+  db:
+    interface: dbi
