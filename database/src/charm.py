@@ -40,32 +40,32 @@ class DatabaseCharm(CharmBase):
         )
         secret.grant(event.relation)
         event.relation.data[self.app]["db_password_id"] = secret.id
-        self.unit.status = ActiveStatus(f"created {secret} with content {content}")
+        self.unit.status = ActiveStatus("relation-created: added new secret")
 
     def _on_db_relation_broken(self, event):
         logger.info(f"_on_db_relation_broken: {event.relation}")
         secret = self.model.get_secret(label="password")
         secret.remove_all()  # grants also revoked by Juju
-        self.unit.status = ActiveStatus(f"removed {secret}")
+        self.unit.status = ActiveStatus("relation-broken: removed secret")
 
     def _on_secret_rotate(self, event):
         logger.info(f"_on_secret_rotate: {event.secret}")
         if event.secret.label == "password":
             content = self._generate_secret_content()
             event.secret.set_content(content)
-            self.unit.status = ActiveStatus(f"set {event.secret} content {content}")
+            self.unit.status = ActiveStatus("secret-rotate: updated secret content")
 
     def _on_secret_remove(self, event):  # remove unused revision early
         logger.info(f"_on_secret_remove: {event.secret}")
         if event.secret.label == "password":
             event.secret.remove_revision()
-            self.unit.status = ActiveStatus(f"removed secret revision {event.secret}")
+            self.unit.status = ActiveStatus("secret-remove: removed secret revision")
 
     def _on_secret_expired(self, event):
         logger.info(f"_on_secret_expired: {event.secret}")
         if event.secret.label == "password":
             event.secret.remove_revision()
-            self.unit.status = ActiveStatus(f"removed secret revision {event.secret}")
+            self.unit.status = ActiveStatus("secret-expired: removed secret revision")
 
 
 if __name__ == "__main__":  # pragma: nocover

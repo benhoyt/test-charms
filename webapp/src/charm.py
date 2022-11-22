@@ -28,7 +28,7 @@ class WebAppCharm(CharmBase):
         secret = self.model.get_secret(id=secret_id, label="db_password")
         content = secret.get_content()
         logger.info(f"would update web app {secret} with new content {content}")
-        self.unit.status = ActiveStatus(f"would update web app {secret} with new password")
+        self.unit.status = ActiveStatus("relation-changed: would update web app's db secret")
 
     def _on_secret_change(self, event):
         logger.info(f"_on_secret_change: {event.secret}")
@@ -36,9 +36,7 @@ class WebAppCharm(CharmBase):
             # could try out latest password with event.secret.peek() and block if bad
             content = event.secret.get_content(refresh=True)
             logger.info(f"would update web app {event.secret} with new content {content}")
-            self.unit.status = ActiveStatus(
-                f"would update web app {event.secret} with new password"
-            )
+            self.unit.status = ActiveStatus("secret-change: would update web app's db secret")
 
 
 if __name__ == "__main__":  # pragma: nocover
