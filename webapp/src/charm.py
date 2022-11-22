@@ -16,7 +16,7 @@ class WebAppCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
         self.framework.observe(self.on.db_relation_changed, self._on_db_relation_changed)
-        self.framework.observe(self.on.secret_changed, self._on_secret_change)
+        self.framework.observe(self.on.secret_changed, self._on_secret_changed)
 
     def _on_db_relation_changed(self, event):
         relation_data = event.relation.data[event.app]
@@ -31,8 +31,8 @@ class WebAppCharm(CharmBase):
         logger.info(f"would update web app {secret} with new content {content}")
         self.unit.status = ActiveStatus("relation-changed: would update web app's db secret")
 
-    def _on_secret_change(self, event):
-        logger.info(f"_on_secret_change: {event.secret}")
+    def _on_secret_changed(self, event):
+        logger.info(f"_on_secret_changed: {event.secret}")
         if event.secret.label == "db_password":
             # could try out latest password with event.secret.peek() and block if bad
             content = event.secret.get_content(refresh=True)
