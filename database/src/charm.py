@@ -26,6 +26,7 @@ class DatabaseCharm(CharmBase):
     def _generate_secret_content(self):
         n = random.randrange(100)
         password = f"pass{n}"
+        # NOTE: Don't log the secret content for real charms!
         logger.info(f"would update database with new password {password!r}")
         return {"password": password}
 

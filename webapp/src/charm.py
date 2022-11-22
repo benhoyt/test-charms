@@ -27,6 +27,7 @@ class WebAppCharm(CharmBase):
         secret_id = event.relation.data[event.app]["db_password_id"]
         secret = self.model.get_secret(id=secret_id, label="db_password")
         content = secret.get_content()
+        # NOTE: Don't log the secret content for real charms!
         logger.info(f"would update web app {secret} with new content {content}")
         self.unit.status = ActiveStatus("relation-changed: would update web app's db secret")
 
@@ -35,6 +36,7 @@ class WebAppCharm(CharmBase):
         if event.secret.label == "db_password":
             # could try out latest password with event.secret.peek() and block if bad
             content = event.secret.get_content(refresh=True)
+            # NOTE: Don't log the secret content for real charms!
             logger.info(f"would update web app {event.secret} with new content {content}")
             self.unit.status = ActiveStatus("secret-change: would update web app's db secret")
 
