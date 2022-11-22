@@ -35,8 +35,8 @@ class DatabaseCharm(CharmBase):
         secret = self.app.add_secret(
             content,
             label="password",
-            rotate=SecretRotate.MONTHLY,
-            expire=datetime.timedelta(days=90),
+            rotate=SecretRotate.HOURLY,
+            expire=datetime.timedelta(hours=2),
         )
         secret.grant(event.relation)
         event.relation.data[self.app]["db_password_id"] = secret.id
