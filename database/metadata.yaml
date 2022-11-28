@@ -8,15 +8,6 @@ summary: Database charm to test owner side of secrets
 description: |
     This is a test charm by Ben.
 
-containers:
-  redis:
-    resource: redis-image
-
-resources:
-  redis-image:
-    type: oci-image
-    description: Docker image for Redis
-
 provides:
   db:
     interface: dbi
