@@ -59,13 +59,13 @@ class DatabaseCharm(CharmBase):
     def _on_secret_remove(self, event):  # remove unused revision early
         logger.info(f"_on_secret_remove: {event.secret}")
         if event.secret.label == "password":
-            event.secret.remove_revision()
+            event.secret.remove_revision(event.revision)
             self.unit.status = ActiveStatus("secret-remove: removed secret revision")
 
     def _on_secret_expired(self, event):
         logger.info(f"_on_secret_expired: {event.secret}")
         if event.secret.label == "password":
-            event.secret.remove_revision()
+            event.secret.remove_revision(event.revision)
             self.unit.status = ActiveStatus("secret-expired: removed secret revision")
 
 
