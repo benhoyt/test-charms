@@ -16,11 +16,11 @@ class TestCharm(unittest.TestCase):
         ops.testing.SIMULATE_CAN_CONNECT = True
         self.harness = Harness(DatabaseCharm)
         self.addCleanup(self.harness.cleanup)
+        self.harness.set_leader()
         self.harness.begin()
 
     def _add_secret(self):
         # Add relation to consumer charm ("webapp") to fire _on_db_relation_created
-        self.harness.set_leader()
         relation_id = self.harness.add_relation("db", "webapp")
         self.harness.add_relation_unit(relation_id, "webapp/0")
 
