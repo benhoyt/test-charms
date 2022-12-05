@@ -35,10 +35,15 @@ class WebAppCharm(CharmBase):
         logger.info(f"_on_secret_changed: {event.secret}")
         if event.secret.label == "db_password":
             # could try out latest password with event.secret.peek() and block if bad
+            old_content = event.secret.get_content()
             content = event.secret.get_content(refresh=True)
+            if content == old_content:
+                self.unit.status = ActiveStatus("secret-changed: secret content not changed")
+                return
+
             # NOTE: Don't log the secret content for real charms!
             logger.info(f"would update web app {event.secret} with new content {content}")
-            self.unit.status = ActiveStatus("secret-change: would update web app's db secret")
+            self.unit.status = ActiveStatus("secret-changed: would update web app's db secret")
 
 
 if __name__ == "__main__":  # pragma: nocover
