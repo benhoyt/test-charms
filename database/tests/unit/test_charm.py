@@ -72,7 +72,7 @@ class TestCharm(unittest.TestCase):
         old_revisions = self.harness.get_secret_revisions(secret_id)
         self.assertEqual(len(old_revisions), 1)
 
-        self.harness.emit_secret_rotate(secret_id)
+        self.harness.trigger_secret_rotation(secret_id)
         new_revisions = self.harness.get_secret_revisions(secret_id)
         self.assertEqual(len(new_revisions), 2)
 
@@ -82,22 +82,22 @@ class TestCharm(unittest.TestCase):
         old_revisions = self.harness.get_secret_revisions(secret_id)
         self.assertEqual(len(old_revisions), 1)
 
-        self.harness.emit_secret_rotate(secret_id, label="foo")
+        self.harness.trigger_secret_rotation(secret_id, label="foo")
         new_revisions = self.harness.get_secret_revisions(secret_id)
         self.assertEqual(len(new_revisions), 1)
 
     def test_secret_remove(self):
         # Add secret and create a second revision
         secret_id, relation_id = self._add_secret()
+        old_revision = self.harness.get_secret_revisions(secret_id)[0]
         secret = self.harness.model.get_secret(id=secret_id)
         secret.set_content({"password": "x"})
-        old_revisions = self.harness.get_secret_revisions(secret_id)
-        self.assertEqual(len(old_revisions), 2)
 
-        # Fire secret-remove hook and ensure revision gets removed
-        self.harness.emit_secret_remove(secret_id)
+        # Fire secret-remove hook and ensure oldest revision gets removed
+        self.harness.trigger_secret_removal(secret_id, old_revision)
         new_revisions = self.harness.get_secret_revisions(secret_id)
-        self.assertEqual(new_revisions, [old_revisions[0]])
+        self.assertEqual(len(new_revisions), 1)
+        self.assertNotIn(old_revision, new_revisions)
 
     def test_secret_remove_other_label(self):
         secret_id, relation_id = self._add_secret()
@@ -105,21 +105,21 @@ class TestCharm(unittest.TestCase):
         self.assertEqual(len(revisions), 1)
 
         # Fire secret-remove hook with another label and ensure it's a no-op
-        self.harness.emit_secret_remove(secret_id, label="foo")
+        self.harness.trigger_secret_removal(secret_id, revisions[0], label="foo")
         self.assertEqual(self.harness.get_secret_revisions(secret_id), revisions)
 
     def test_secret_expired(self):
         # Add secret and create a second revision
         secret_id, relation_id = self._add_secret()
+        old_revision = self.harness.get_secret_revisions(secret_id)[0]
         secret = self.harness.model.get_secret(id=secret_id)
         secret.set_content({"password": "x"})
-        old_revisions = self.harness.get_secret_revisions(secret_id)
-        self.assertEqual(len(old_revisions), 2)
 
-        # Fire secret-expired hook and ensure revision gets removed
-        self.harness.emit_secret_expired(secret_id)
+        # Fire secret-expired hook and ensure oldest revision gets removed
+        self.harness.trigger_secret_expiration(secret_id, old_revision)
         new_revisions = self.harness.get_secret_revisions(secret_id)
-        self.assertEqual(new_revisions, [old_revisions[0]])
+        self.assertEqual(len(new_revisions), 1)
+        self.assertNotIn(old_revision, new_revisions)
 
     def test_secret_expired_other_label(self):
         secret_id, relation_id = self._add_secret()
@@ -127,5 +127,5 @@ class TestCharm(unittest.TestCase):
         self.assertEqual(len(revisions), 1)
 
         # Fire secret-expired hook with another label and ensure it's a no-op
-        self.harness.emit_secret_expired(secret_id, label="foo")
+        self.harness.trigger_secret_expiration(secret_id, revisions[0], label="foo")
         self.assertEqual(self.harness.get_secret_revisions(secret_id), revisions)
