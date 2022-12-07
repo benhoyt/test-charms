@@ -19,7 +19,7 @@ class TestCharm(unittest.TestCase):
     def _add_secret(self):
         relation_id = self.harness.add_relation("db", "database")
         self.harness.add_relation_unit(relation_id, "database/0")
-        secret_id = self.harness.add_secret("database", {"password": "pass123"})
+        secret_id = self.harness.add_model_secret("database", {"password": "pass123"})
         self.harness.grant_secret(secret_id, "webapp")
         return (secret_id, relation_id)
 
