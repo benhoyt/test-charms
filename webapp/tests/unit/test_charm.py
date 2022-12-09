@@ -3,6 +3,7 @@
 
 import unittest
 
+import ops.model
 import ops.testing
 from ops.testing import Harness
 
@@ -34,6 +35,15 @@ class TestCharm(unittest.TestCase):
         secret = self.harness.model.get_secret(label="db_password")
         self.assertEqual(secret.label, "db_password")
         self.assertEqual(secret.get_content(), {"password": "pass123"})
+
+    def test_db_relation_changed_no_data(self):
+        relation_id = self.harness.add_relation("db", "database")
+        self.harness.add_relation_unit(relation_id, "database/0")
+        self.harness.update_relation_data(relation_id, "database", {"foo": "bar"})
+
+        # Ensure secret's consumer label was not updated (won't be found)
+        with self.assertRaises(ops.model.SecretNotFoundError):
+            self.harness.model.get_secret(label="db_password")
 
     def test_secret_changed(self):
         # Add secret and grant this charm access
