@@ -46,7 +46,7 @@ class DatabaseCharm(CharmBase):
     def _on_db_relation_broken(self, event):
         logger.info(f"_on_db_relation_broken: {event.relation}")
         secret = self.model.get_secret(label="password")
-        secret.remove_all()  # grants also revoked by Juju
+        secret.remove_all_revisions()  # grants also revoked by Juju
         self.unit.status = ActiveStatus("relation-broken: removed secret")
 
     def _on_secret_rotate(self, event):
