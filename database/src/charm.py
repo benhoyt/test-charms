@@ -5,14 +5,12 @@ import datetime
 import logging
 import random
 
-from ops.charm import CharmBase
-from ops.main import main
-from ops.model import ActiveStatus, SecretRotate
+import ops
 
 logger = logging.getLogger(__name__)
 
 
-class DatabaseCharm(CharmBase):
+class DatabaseCharm(ops.CharmBase):
     """Database charm to test secrets owner."""
 
     def __init__(self, *args):
@@ -36,38 +34,38 @@ class DatabaseCharm(CharmBase):
         secret = self.app.add_secret(
             content,
             label="password",
-            rotate=SecretRotate.HOURLY,
+            rotate=ops.SecretRotate.HOURLY,
             expire=datetime.timedelta(hours=2),
         )
         secret.grant(event.relation)
         event.relation.data[self.app]["db_password_id"] = secret.id
-        self.unit.status = ActiveStatus("relation-created: added new secret")
+        self.unit.status = ops.ActiveStatus("relation-created: added new secret")
 
     def _on_db_relation_broken(self, event):
         logger.info(f"_on_db_relation_broken: {event.relation}")
         secret = self.model.get_secret(label="password")
         secret.remove_all_revisions()  # grants also revoked by Juju
-        self.unit.status = ActiveStatus("relation-broken: removed secret")
+        self.unit.status = ops.ActiveStatus("relation-broken: removed secret")
 
     def _on_secret_rotate(self, event):
         logger.info(f"_on_secret_rotate: {event.secret}")
         if event.secret.label == "password":
             content = self._generate_secret_content()
             event.secret.set_content(content)
-            self.unit.status = ActiveStatus("secret-rotate: updated secret content")
+            self.unit.status = ops.ActiveStatus("secret-rotate: updated secret content")
 
     def _on_secret_remove(self, event):  # remove unused revision early
         logger.info(f"_on_secret_remove: {event.secret}")
         if event.secret.label == "password":
             event.secret.remove_revision(event.revision)
-            self.unit.status = ActiveStatus("secret-remove: removed secret revision")
+            self.unit.status = ops.ActiveStatus("secret-remove: removed secret revision")
 
     def _on_secret_expired(self, event):
         logger.info(f"_on_secret_expired: {event.secret}")
         if event.secret.label == "password":
             event.secret.remove_revision(event.revision)
-            self.unit.status = ActiveStatus("secret-expired: removed secret revision")
+            self.unit.status = ops.ActiveStatus("secret-expired: removed secret revision")
 
 
 if __name__ == "__main__":  # pragma: nocover
-    main(DatabaseCharm)
+    ops.main(DatabaseCharm)

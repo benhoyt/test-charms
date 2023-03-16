@@ -4,17 +4,14 @@
 import datetime
 import unittest
 
-import ops.testing
-from ops.model import SecretNotFoundError, SecretRotate
-from ops.testing import Harness
+import ops
 
 from charm import DatabaseCharm
 
 
 class TestCharm(unittest.TestCase):
     def setUp(self):
-        ops.testing.SIMULATE_CAN_CONNECT = True
-        self.harness = Harness(DatabaseCharm)
+        self.harness = ops.Harness(DatabaseCharm)
         self.addCleanup(self.harness.cleanup)
         self.harness.set_leader()
         self.harness.begin()
@@ -48,7 +45,7 @@ class TestCharm(unittest.TestCase):
         minute = datetime.timedelta(minutes=1)
         self.assertGreater(info.expires, expires - minute)
         self.assertLess(info.expires, expires + minute)
-        self.assertEqual(info.rotation, SecretRotate.HOURLY)
+        self.assertEqual(info.rotation, ops.SecretRotate.HOURLY)
         self.assertIsNotNone(info.rotates)
 
         # Ensure secret was granted to application
@@ -63,7 +60,7 @@ class TestCharm(unittest.TestCase):
         self.harness.remove_relation(relation_id)
 
         # Ensure hook removed secret
-        with self.assertRaises(SecretNotFoundError):
+        with self.assertRaises(ops.SecretNotFoundError):
             self.harness.model.get_secret(id=secret_id)
 
     def test_secret_rotate(self):
