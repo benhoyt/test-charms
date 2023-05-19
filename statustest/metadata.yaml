@@ -1,0 +1,13 @@
+name: statustest
+display-name: Status Test
+summary: Multi-status test charm for OP033 spec.
+
+# containers:
+#   some-container:
+#     resource: some-container-image
+
+# resources:
+#   some-container-image:
+#     type: oci-image
+#     description: OCI image for the 'some-container' container
+#     upstream-source: some-repo/some-image:some-tag
