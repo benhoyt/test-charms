@@ -1,0 +1,7 @@
+options:
+  database_mode:
+    description: "Database mode"
+    type: "string"
+  webapp_port:
+    description: "Web app port"
+    type: "int"
