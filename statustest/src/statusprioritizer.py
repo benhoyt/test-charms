@@ -23,8 +23,8 @@ class StatusPrioritizer:
     def __init__(self):
         self._components = {}
 
-    def add_component(self, component: str, get_status: typing.Callable[[], ops.StatusBase]):
-        """Register a named status component. Components registered first have higher priority."""
+    def add(self, component: str, get_status: typing.Callable[[], ops.StatusBase]):
+        """Add a named status component. Components added first have higher priority."""
         if component in self._components:
             raise ValueError(f"duplicate component {component!r}")
         self._components[component] = get_status
@@ -40,8 +40,8 @@ class StatusPrioritizer:
         statuses.sort(key=lambda s: self._PRIORITIES[s[1].name])
         return statuses[0]
 
-    def highest_with_name(self) -> ops.StatusBase:
-        """Return highest-priority status, where status message is prefixed with the component name."""
+    def highest_prefixed(self) -> ops.StatusBase:
+        """Return highest-priority status with a message prefixed with the component name."""
         component, status = self.highest()
         if isinstance(status, ops.ActiveStatus) and not status.message:
             return ops.ActiveStatus()

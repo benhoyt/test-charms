@@ -18,12 +18,12 @@ class StatustestCharm(ops.CharmBase):
         self.webapp = Webapp(self)
 
         self.prioritizer = StatusPrioritizer()
-        self.prioritizer.add_component("database", self.database.get_status)
-        self.prioritizer.add_component("webapp", self.webapp.get_status)
+        self.prioritizer.add("database", self.database.get_status)
+        self.prioritizer.add("webapp", self.webapp.get_status)
         self.framework.observe(self.framework.on.commit, self._on_commit)
 
     def _on_commit(self, event):
-        self.unit.status = self.prioritizer.highest_with_name()
+        self.unit.status = self.prioritizer.highest_prefixed()
 
 
 class Database(ops.Object):
