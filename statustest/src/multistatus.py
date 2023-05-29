@@ -51,7 +51,7 @@ class Prioritizer:
 
 
 class Group:
-    """Group of status-having components.
+    """Group of components that have status.
 
     Each component's status is saved to stored state on update, and loaded
     when the charm is initialized.
@@ -88,7 +88,7 @@ class Group:
 
 
 class Component:
-    """Single status-having component in a status group."""
+    """Single component in a status group."""
 
     def __init__(self, group: Group, name: str, initial=ops.UnknownStatus()):  # TODO: or active?
         self.group = group
