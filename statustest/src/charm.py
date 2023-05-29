@@ -3,7 +3,8 @@
 import logging
 
 import ops
-from statusprioritizer import StatusPrioritizer
+
+import multistatus
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +18,13 @@ class StatustestCharm(ops.CharmBase):
         self.database = Database(self)
         self.webapp = Webapp(self)
 
-        self.prioritizer = StatusPrioritizer()
+        self.prioritizer = multistatus.Prioritizer()
         self.prioritizer.add("database", self.database.get_status)
         self.prioritizer.add("webapp", self.webapp.get_status)
         self.framework.observe(self.framework.on.commit, self._on_commit)
 
     def _on_commit(self, event):
-        self.unit.status = self.prioritizer.highest_prefixed()
+        self.unit.status = self.prioritizer.highest()
 
 
 class Database(ops.Object):
