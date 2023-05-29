@@ -2,9 +2,8 @@
 
 import logging
 
-import ops
-
 import multistatus
+import ops
 
 logger = logging.getLogger(__name__)
 

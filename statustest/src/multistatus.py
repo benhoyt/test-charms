@@ -28,21 +28,22 @@ class Prioritizer:
 
     def highest(self) -> ops.StatusBase:
         """Return highest-priority status with a message prefixed with the component name."""
-        status, component = self.highest_with_name()
+        statuses = self.all()
+        if not statuses:
+            return ops.ActiveStatus()
+        component, status = statuses[0]
         if isinstance(status, ops.ActiveStatus) and not status.message:
             return ops.ActiveStatus()
         return ops.StatusBase.from_name(status.name, f"[{component}] {status.message}")
 
-    def highest_with_name(self) -> typing.Tuple[ops.StatusBase, str]:
-        """Return tuple of raw, highest-priority status and component name."""
-        if not self._components:
-            return (ops.ActiveStatus(), "")
+    def all(self) -> list[tuple[str, ops.StatusBase]]:
+        """Return list of (component_name, status) tuples for all components, ordered by priority."""
         # TODO: exception handling (log full details and yield ErrorStatus?)
         statuses = [
-            (get_status(), component) for component, get_status in self._components.items()
+            (component, get_status()) for component, get_status in self._components.items()
         ]
-        statuses.sort(key=lambda s: self._PRIORITIES[s[0].name])
-        return statuses[0]
+        statuses.sort(key=lambda s: self._PRIORITIES[s[1].name])
+        return statuses
 
     def highest_prefixed(self) -> ops.StatusBase:
         """Return highest-priority status with a message prefixed with the component name."""
