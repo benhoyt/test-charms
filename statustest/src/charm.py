@@ -16,13 +16,13 @@ class StatustestCharm(ops.CharmBase):
         super().__init__(*args)
         self.database = Database(self)
         self.webapp = Webapp(self)
-        self.prioritizer = multistatus.Prioritizer()
-        self.prioritizer.add("database", self.database.get_status)
-        self.prioritizer.add("webapp", self.webapp.get_status)
+        self.prioritiser = multistatus.Prioritiser()
+        self.prioritiser.add("database", self.database.get_status)
+        self.prioritiser.add("webapp", self.webapp.get_status)
         self.framework.observe(self.framework.on.commit, self._on_commit)
 
     def _on_commit(self, event):
-        self.unit.status = self.prioritizer.highest()
+        self.unit.status = self.prioritiser.highest()
 
 
 class Database(ops.Object):

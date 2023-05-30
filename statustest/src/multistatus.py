@@ -1,12 +1,12 @@
-"""Status prioritizer."""
+"""Status prioritiser."""
 
 import typing
 
 import ops
 
 
-class Prioritizer:
-    """Status prioritizer: track the highest-priority status among several components."""
+class Prioritiser:
+    """Status prioritiser: track the highest-priority status among several components."""
 
     _PRIORITIES = {
         "error": 0,
