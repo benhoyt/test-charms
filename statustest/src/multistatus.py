@@ -55,11 +55,15 @@ class Group:
 
     Each component's status is saved to stored state when its status is set,
     and is loaded when the charm is initialized.
+
+    Args:
+        app_or_unit: An Application instance to set application status (only
+            valid on the leader unit), or a Unit instance to set unit status
+            (valid for all units).
     """
 
-    def __init__(self, charm: ops.CharmBase, app=False):
-        self._charm = charm
-        self._app = app
+    def __init__(self, app_or_unit: typing.Union[ops.Application, ops.Unit]):
+        self._app_or_unit = app_or_unit
         self._prioritiser = Prioritiser()
         self._components = {}
         self._loaded = {}
@@ -73,11 +77,7 @@ class Group:
             component._status = loaded
 
     def _update(self) -> None:
-        highest = self._prioritiser.highest()
-        if self._app:
-            self._charm.app.status = highest
-        else:
-            self._charm.unit.status = highest
+        self._app_or_unit.status = self._prioritiser.highest()
         self._save()
 
     def _load(self):

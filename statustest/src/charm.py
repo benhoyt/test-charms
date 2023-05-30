@@ -13,7 +13,7 @@ class StatustestCharm(ops.CharmBase):
 
     def __init__(self, *args):
         super().__init__(*args)
-        status_group = multistatus.Group(self)
+        status_group = multistatus.Group(self.unit)
         self.database = Database(self, status_group)
         self.webapp = Webapp(self, status_group)
 
