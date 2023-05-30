@@ -1,12 +1,12 @@
-"""Status prioritizer."""
+"""Status prioritiser."""
 
 import typing
 
 import ops
 
 
-class Prioritizer:
-    """Status prioritizer: track the highest-priority status among several components."""
+class Prioritiser:
+    """Status prioritiser: track the highest-priority status among several components."""
 
     _PRIORITIES = {
         "error": 0,
@@ -60,20 +60,20 @@ class Group:
     def __init__(self, charm: ops.CharmBase, app=False):
         self._charm = charm
         self._app = app
-        self._prioritizer = Prioritizer()
+        self._prioritiser = Prioritiser()
         self._components = {}
         self._loaded = {}
         self._load()
 
     def _add(self, component: "Component") -> None:
         self._components[component.name] = component
-        self._prioritizer.add(component.name, lambda: component.status)
+        self._prioritiser.add(component.name, lambda: component.status)
         loaded = self._loaded.get(component.name)
         if loaded is not None:
             component._status = loaded
 
     def _update(self) -> None:
-        highest = self._prioritizer.highest()
+        highest = self._prioritiser.highest()
         if self._app:
             self._charm.app.status = highest
         else:
