@@ -31,3 +31,9 @@ ignore = ["W503", "E501", "D107"]
 # D100, D101, D102, D103: Ignore missing docstrings in tests
 per-file-ignores = ["tests/*:D100,D101,D102,D103,D104"]
 docstring-convention = "google"
+
+[tool.pyright]
+include = ["src/*.py"]
+pythonVersion = "3.8" # check no python > 3.8 features are used
+pythonPlatform = "Linux"
+typeCheckingMode = "strict"
