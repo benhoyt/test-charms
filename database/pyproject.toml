@@ -33,7 +33,12 @@ per-file-ignores = ["tests/*:D100,D101,D102,D103,D104"]
 docstring-convention = "google"
 
 [tool.pyright]
-include = ["src/*.py"]
+include = ["src/**.py"]
 pythonVersion = "3.8" # check no python > 3.8 features are used
 pythonPlatform = "Linux"
 typeCheckingMode = "strict"
+
+[tool.mypy]
+files = "src/**.py"
+python_version = "3.8"
+strict = true
