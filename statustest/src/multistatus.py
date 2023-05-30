@@ -30,7 +30,7 @@ class Prioritiser:
         """Return highest-priority status with message prefixed with component name."""
         statuses = self.all()
         if not statuses:
-            return ops.ActiveStatus()
+            return ops.UnknownStatus()
         component, status = statuses[0]
         if isinstance(status, ops.ActiveStatus) and not status.message:
             return ops.ActiveStatus()
