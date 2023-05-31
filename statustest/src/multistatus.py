@@ -48,10 +48,3 @@ class Prioritiser:
         ]
         statuses.sort(key=lambda s: self._PRIORITIES[s[1].name])
         return statuses
-
-    def highest_prefixed(self) -> ops.StatusBase:
-        """Return highest-priority status with a message prefixed with the component name."""
-        component, status = self.highest()
-        if isinstance(status, ops.ActiveStatus) and not status.message:
-            return ops.ActiveStatus()
-        return ops.StatusBase.from_name(status.name, f"({component}) {status.message}")
