@@ -1,0 +1,2 @@
+#ops ~= 2.10
+git+https://github.com/canonical/operator#egg=ops

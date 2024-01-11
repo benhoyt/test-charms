@@ -1,0 +1,20 @@
+name: noticestest
+type: charm
+summary: Test Pebble Notices
+description: A charm that tests Pebble Notices.
+
+bases:
+  - build-on:
+    - name: ubuntu
+      channel: "22.04"
+    run-on:
+    - name: ubuntu
+      channel: "22.04"
+
+containers:
+  db:
+    resource: db-image
+
+resources:
+  db-image:
+    type: oci-image
