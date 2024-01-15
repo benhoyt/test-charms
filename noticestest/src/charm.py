@@ -19,10 +19,10 @@ s3_bucket = _FakeS3Bucket()
 class PostgresCharm(ops.CharmBase):
     """Charm to test Pebble Notices."""
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, framework: ops.Framework):
+        super().__init__(framework)
         # Note that "db" is the workload container's name
-        self.framework.observe(self.on["db"].pebble_custom_notice, self._on_pebble_custom_notice)
+        framework.observe(self.on["db"].pebble_custom_notice, self._on_pebble_custom_notice)
 
     def _on_pebble_custom_notice(self, event: ops.PebbleCustomNoticeEvent) -> None:
         if event.notice.key == "canonical.com/postgresql/backup-done":
