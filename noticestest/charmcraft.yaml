@@ -18,3 +18,8 @@ containers:
 resources:
   db-image:
     type: oci-image
+
+parts:
+  charm:
+    build-packages:
+      - git

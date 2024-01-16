@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 class _FakeS3Bucket:
     def upload_fileobj(self, f, key):
-        raise Exception(f"Would upload file to {key!r}")
+        content = f.read()
+        logger.info(f"Would upload {len(content)} bytes to key {key!r}")
 
 
 s3_bucket = _FakeS3Bucket()
