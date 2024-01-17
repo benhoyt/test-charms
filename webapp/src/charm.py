@@ -22,7 +22,7 @@ class WebAppCharm(CharmBase):
         relation_data = event.relation.data[event.app]
         logger.info(f"_on_db_relation_changed: {event.relation} data={relation_data}")
         if "db_password_id" not in event.relation.data[event.app]:
-            event.defer()
+            # Secret ID not present in relation data, do nothing
             return
         secret_id = event.relation.data[event.app]["db_password_id"]
         secret = self.model.get_secret(id=secret_id, label="db_password")
